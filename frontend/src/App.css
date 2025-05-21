@@ -1,0 +1,173 @@
+/* ✅ Dark Mode + Glassmorphism */
+:root {
+  --bg-color: #e2e2e2;
+  --bg-color2: #000000;
+  /* --bg-color: #121212; */
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --text-color: #000000;
+  --text-color2: #000000;
+  --btn-bg: #ff5252;
+  --btn-hover: #ff1744;
+}
+
+.homeCont {
+  /* background: var(--bg-color); */
+  color: var(--text-color);
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 50px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 500px; */
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(0, 212, 255, 1) 0%, rgb(114, 63, 255) 0%, rgb(255, 99, 125) 100%);
+}
+
+
+
+.title {
+  font-size: 33px;
+  /* margin-bottom: 20px; */
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+.title2 {
+  font-size: 19px;
+  /* margin-bottom: 20px; */
+  color: rgb(244, 244, 244);
+
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+/* ✅ Input Styling */
+.input {
+  background-color: white;
+  color: var(--text-color);
+  width: 100%;
+  padding: 20px 10px;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* ✅ Buttons */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--btn-bg);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.dark .btn {
+  background: linear-gradient(45deg, #f43f5e, #facc15);
+
+
+}
+
+.btn:hover {
+  background: var(--btn-hover);
+}
+
+/* ✅ Shortened URL */
+.short-url {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.short-url a {
+  color: #ff5252;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* ✅ Video Info Section */
+.video-info {
+  margin-top: 10px;
+  /* height: 900px; */
+}
+
+.thumbnail {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.download-btn {
+  margin-top: 10px;
+}
+/* ✅ Dark mode property */
+.dark .homeCont {
+  background: var(--bg-color2);
+  color: var(--text-color2);
+
+}
+.dark .title {
+  background: linear-gradient(45deg, #f43f5e, #facc15);
+background-clip: text;
+-webkit-text-fill-color: transparent;
+
+}
+.dark .title2 {
+  background: linear-gradient(45deg, #f43f5e, #facc15);
+background-clip: text;
+-webkit-text-fill-color: transparent;
+
+}
+.dark .input {
+  background-color: #ffffff27;
+  color: white;
+
+}
+
+@media only screen and (max-width: 400px) {
+  .homeCont {
+    flex-direction: column;
+    padding: 30px 15px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .title2 {
+    font-size: 14px;
+  }
+
+  .input {
+    font-size: 14px;
+    padding: 15px 10px;
+  
+  }
+
+  .btn {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .short-url {
+    font-size: 13px;
+  }
+
+  .video-info {
+    margin-top: 20px;
+  }
+
+  .thumbnail {
+    max-width: 100%;
+    height: auto;
+  }
+}

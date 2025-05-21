@@ -1,0 +1,135 @@
+/* FAQ Section Styling */
+.faq-container {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #f9f9f9;
+    /* border: 2px solid red; */
+  }
+  
+  .faq-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 0;
+    margin-bottom: 30px;
+    
+    
+
+  }
+  
+  /* FAQ List */
+  .faq-list {
+    width: 100%;
+    max-width: 700px;
+  }
+  
+  /* FAQ Items */
+  .faq-item {
+    /* background: rgba(255, 255, 255, 0.1); */
+    background: #ffffff;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: 0.3s ease-in-out;
+  }
+  
+  .faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    outline: none;
+  }
+  p{
+    color: #000000;
+  }
+  /* FAQ Icon */
+  .faq-icon {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .faq-icon.rotate {
+    transform: rotate(180deg);
+  }
+  
+  /* FAQ Answer */
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  
+  .faq-answer.open {
+    max-height: 200px;
+    opacity: 1;
+    padding-top: 10px;
+  }
+  
+  
+  
+  /* ✅ Dark mode property */
+  .dark-faq-title{
+    background: linear-gradient(45deg, #f43f5e, #facc15);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .dark-faq-question{
+    color: #888888;
+  }
+  .dark-faq-ans{
+    color: #888888;
+  }
+  .dark-faq-cont{
+    background: #000000;
+    /* border: 2px solid red; */
+  }
+  .dark-faq-item {
+    background: rgba(255, 255, 255, 0.1);
+    
+  }
+
+  @media only screen and (max-width: 977px) {
+    .faq-container {
+      padding: 15px 10px;
+    }
+  
+    .faq-title {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+  
+    .faq-list {
+      max-width: 100%;
+    }
+  
+    .faq-item {
+      padding: 12px;
+      border-radius: 10px;
+    }
+  
+    .faq-question {
+      text-align: start;
+      font-size: 13px;
+      padding: 8px;
+    }
+  
+    .faq-answer.open {
+      font-size: 13px;
+    }
+  }
+  

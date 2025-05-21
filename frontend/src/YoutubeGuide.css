@@ -1,0 +1,160 @@
+.guide-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0px;
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+}
+
+.guide-title {
+  text-align: center;
+  font-size: 26px;
+  /* font-weight: bold; */
+  margin-bottom: 20px;
+  color: #0449df;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  /* padding: 15px; */
+  margin-bottom: 15px;
+  /* border-radius: 10px; */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+.s1{
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.step:hover {
+  transform: scale(1.02);
+}
+
+.step-content {
+  flex: 1;
+  padding: 10px;
+  margin: 20px;
+}
+
+.step h3 {
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.step h3 span {
+  color: #0449df;
+}
+
+.step p {
+  font-size: 18px;
+  color: #555;
+}
+
+.step-icon {
+  display: block;
+  width: 400px;
+  height: 270px;
+}
+.icon1{
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.icon2{
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.icon3{
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.icon4{
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+
+/* ✅ Dark mode property */
+.dark-guide-title {
+  background: linear-gradient(45deg, #f43f5e, #facc15);
+  background-clip: text;
+-webkit-text-fill-color: transparent;
+  
+}
+.dark-step {
+  background: #343434;
+  color: #b43333;
+}
+.dark-step p {
+  color: #888888;
+}
+
+.dark-step h3 {
+  color: #f90000;
+}
+
+.dark-step h3>span {
+  background: linear-gradient(45deg, #f43f5e, #facc15);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+@media only screen and (max-width: 977px) {
+  .guide-container {
+    padding: 10px;
+  }
+
+  .guide-title {
+    font-size: 17px;
+  }
+
+  .step {
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .step-content {
+    padding: 5px;
+    margin: 10px 0;
+  }
+
+  .step h3 {
+    font-size: 17px;
+  }
+
+  .step p {
+    font-size: 14px;
+  }
+
+  .step-icon {
+    order: -1; /* Yeh karega image ko upar har step me */
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+  .icon1{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 0px;
+  }
+  .icon2{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 0px;
+  }
+  .icon3{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 0px;
+  }
+  .icon4{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 0px;
+  }
+}
