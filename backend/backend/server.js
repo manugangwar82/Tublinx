@@ -170,7 +170,96 @@ app.get("/s/:shortId", (req, res) => {
     res.status(404).json({ error: "Short URL not found" });
   }
 });
-// ✅ Video Info API (Fetch Available Formats - Duplicates & Quality Repeats Removed)
+// // ✅ Video Info API (Fetch Available Formats - Duplicates & Quality Repeats Removed)
+// app.get("/videoInfo", async (req, res) => {
+//   const { url } = req.query;
+
+//   if (!url || !url.startsWith("http")) {
+//     return res.status(400).json({ error: "❌ Invalid YouTube URL" });
+//   }
+
+//   try {
+//     // Get title + thumbnail from oEmbed
+//     const { data: meta } = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`);
+
+//     // Get full video info via yt-dlp
+//    const ytdlpPath = path.join(__dirname, "..", "bin", "yt-dlp"); // ✅ Go one level up
+
+//     const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
+//     let jsonData = "";
+
+//     ytdlProcess.stdout.on("data", (chunk) => {
+//       jsonData += chunk;
+//     });
+
+//     ytdlProcess.stderr.on("data", (err) => {
+//       console.error(`yt-dlp error: ${err}`);
+//     });
+
+//     ytdlProcess.on("close", (code) => {
+//       if (code !== 0) {
+//         return res.status(500).json({ error: "❌ yt-dlp failed to fetch video info" });
+//       }
+
+//       try {
+//         const info = JSON.parse(jsonData);
+//         const rawFormats = info.formats || [];
+
+//         const processed = rawFormats
+//           .filter((f) => (f.ext === "mp4" || f.ext === "m4a") && (f.vcodec !== "none" || f.acodec !== "none"))
+//           .map((f) => ({
+//             itag: f.format_id,
+//             quality: f.format_note || `${f.height || "?"}p`,
+//             type: f.vcodec === "none" ? "audio" : "video",
+//             filesize: f.filesize ? formatBytes(f.filesize) : "Unknown",
+//             resolution: f.resolution || `${f.width || "?"}x${f.height || "?"}`,
+//           }));
+
+//         // ✅ Remove duplicate quality entries (720p, 360p etc.)
+//         const uniqueByQuality = [];
+//         const seenQualities = new Set();
+
+//         for (const format of processed) {
+//           if (!seenQualities.has(format.quality)) {
+//             seenQualities.add(format.quality);
+//             uniqueByQuality.push(format);
+//           }
+//         }
+
+//         // ✅ Sort: video before audio, then descending quality (e.g., 1080p > 720p)
+//         uniqueByQuality.sort((a, b) => {
+//           if (a.type !== b.type) return a.type === "video" ? -1 : 1;
+//           return parseInt(b.quality) - parseInt(a.quality);
+//         });
+
+//         res.json({
+//           title: meta.title,
+//           thumbnail: `https://img.youtube.com/vi/${info.id}/hqdefault.jpg`,
+//           formats: uniqueByQuality,
+//         });
+//       } catch (err) {
+//         console.error("Parsing error:", err);
+//         res.status(500).json({ error: "❌ Failed to parse yt-dlp output" });
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error("API error:", error);
+//     res.status(500).json({ error: "❌ Failed to fetch video metadata" });
+//   }
+// });
+
+// // Helper function to format bytes
+// function formatBytes(bytes) {
+//   const sizes = ["B", "KB", "MB", "GB"];
+//   if (bytes === 0) return "0 B";
+//   const i = Math.floor(Math.log(bytes) / Math.log(1024));
+//   return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+// }
+
+
+
+// ✅ Video Info API (Fetch Available Formats)
 app.get("/videoInfo", async (req, res) => {
   const { url } = req.query;
 
@@ -178,30 +267,40 @@ app.get("/videoInfo", async (req, res) => {
     return res.status(400).json({ error: "❌ Invalid YouTube URL" });
   }
 
+  const ytdlpPath = path.join(__dirname, "..", "bin", "yt-dlp"); // ✅ Go one level up
+
   try {
-    // Get title + thumbnail from oEmbed
+    // Step 1: oEmbed for title
     const { data: meta } = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`);
 
-    // Get full video info via yt-dlp
-   const ytdlpPath = path.join(__dirname, "..", "bin", "yt-dlp"); // ✅ Go one level up
-
+    // Step 2: yt-dlp spawn
     const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
+
     let jsonData = "";
+    let errorData = "";
 
     ytdlProcess.stdout.on("data", (chunk) => {
       jsonData += chunk;
     });
 
     ytdlProcess.stderr.on("data", (err) => {
-      console.error(`yt-dlp error: ${err}`);
+      errorData += err.toString();
     });
 
     ytdlProcess.on("close", (code) => {
-      if (code !== 0) {
-        return res.status(500).json({ error: "❌ yt-dlp failed to fetch video info" });
+      console.log("🔚 yt-dlp exited with code:", code);
+
+      if (errorData) {
+        console.error("❌ yt-dlp stderr:", errorData);
+      }
+
+      if (code !== 0 || !jsonData) {
+        return res.status(500).json({ error: "❌ yt-dlp failed to fetch video info", details: errorData || "No output" });
       }
 
       try {
+        console.log("📦 yt-dlp raw JSON length:", jsonData.length);
+
         const info = JSON.parse(jsonData);
         const rawFormats = info.formats || [];
 
@@ -215,10 +314,9 @@ app.get("/videoInfo", async (req, res) => {
             resolution: f.resolution || `${f.width || "?"}x${f.height || "?"}`,
           }));
 
-        // ✅ Remove duplicate quality entries (720p, 360p etc.)
+        // Remove duplicates
         const uniqueByQuality = [];
         const seenQualities = new Set();
-
         for (const format of processed) {
           if (!seenQualities.has(format.quality)) {
             seenQualities.add(format.quality);
@@ -226,36 +324,30 @@ app.get("/videoInfo", async (req, res) => {
           }
         }
 
-        // ✅ Sort: video before audio, then descending quality (e.g., 1080p > 720p)
         uniqueByQuality.sort((a, b) => {
           if (a.type !== b.type) return a.type === "video" ? -1 : 1;
           return parseInt(b.quality) - parseInt(a.quality);
         });
 
+        const videoId = extractVideoId(url);
+
         res.json({
           title: meta.title,
-          thumbnail: `https://img.youtube.com/vi/${info.id}/hqdefault.jpg`,
+          thumbnail: info.thumbnail || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
           formats: uniqueByQuality,
         });
-      } catch (err) {
-        console.error("Parsing error:", err);
-        res.status(500).json({ error: "❌ Failed to parse yt-dlp output" });
+      } catch (parseError) {
+        console.error("❌ JSON Parse Error:", parseError);
+        return res.status(500).json({ error: "❌ Failed to parse yt-dlp output" });
       }
     });
-
-  } catch (error) {
-    console.error("API error:", error);
+  } catch (apiError) {
+    console.error("❌ External Meta API Error:", apiError);
     res.status(500).json({ error: "❌ Failed to fetch video metadata" });
   }
 });
 
-// Helper function to format bytes
-function formatBytes(bytes) {
-  const sizes = ["B", "KB", "MB", "GB"];
-  if (bytes === 0) return "0 B";
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
-}
+
 
 app.get("/download", async (req, res) => {
   const { url, itag } = req.query;
