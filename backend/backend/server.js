@@ -183,7 +183,8 @@ app.get("/videoInfo", async (req, res) => {
     const { data: meta } = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`);
 
     // Get full video info via yt-dlp
-   const ytdlpPath = path.join(__dirname, "..", "bin", "yt-dlp"); // ✅ Go one level up
+  const ytdlpPath = path.join(__dirname, "..", "..", "bin", "yt-dlp");
+
 
     const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
     let jsonData = "";
@@ -302,7 +303,8 @@ app.get("/download", async (req, res) => {
   res.setHeader("Transfer-Encoding", "chunked");
   res.setHeader("Connection", "keep-alive");
 
- const ytdlpPath = path.join(__dirname, "..", "bin", "yt-dlp"); // ✅ Go one level up
+const ytdlpPath = path.join(__dirname, "..", "..", "bin", "yt-dlp");
+
 
   const ytdl = spawn(ytdlpPath, ytdlpArgs);
 
