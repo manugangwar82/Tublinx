@@ -114,6 +114,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const { spawn } = require("child_process");
+const path = require("path"); // ✅ Added for local yt-dlp path
 require("dotenv").config();
 
 const app = express();
@@ -166,86 +167,156 @@ app.get("/s/:shortId", (req, res) => {
     res.status(404).json({ error: "Short URL not found" });
   }
 });
-
-// ✅ Video Info API (Fetch Available Formats - Best Removed)
+// ✅ Video Info API (Fetch Available Formats - Duplicates & Quality Repeats Removed)
 app.get("/videoInfo", async (req, res) => {
   const { url } = req.query;
+
   if (!url || !url.startsWith("http")) {
-    return res.status(400).json({ error: "Invalid YouTube URL" });
+    return res.status(400).json({ error: "❌ Invalid YouTube URL" });
   }
+
   try {
-    const { data } = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`);
-    let videoId = extractVideoId(url);
+    // Get title + thumbnail from oEmbed
+    const { data: meta } = await axios.get(`https://www.youtube.com/oembed?url=${url}&format=json`);
 
-    if (!videoId) {
-      return res.status(400).json({ error: "Could not extract video ID" });
-    }
+    // Get full video info via yt-dlp
+    const ytdlpPath = path.join(__dirname, "bin", "yt-dlp"); // ✅ Use local binary path
+    const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
+    let jsonData = "";
 
-    res.json({
-      title: data.title,
-      thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-      formats: [
-        { itag: "22", quality: "720p (MP4)", type: "video" },
-        { itag: "18", quality: "360p (MP4)", type: "video" },
-        { itag: "140", quality: "Audio (M4A)", type: "audio" }
-      ]
+    ytdlProcess.stdout.on("data", (chunk) => {
+      jsonData += chunk;
     });
+
+    ytdlProcess.stderr.on("data", (err) => {
+      console.error(`yt-dlp error: ${err}`);
+    });
+
+    ytdlProcess.on("close", (code) => {
+      if (code !== 0) {
+        return res.status(500).json({ error: "❌ yt-dlp failed to fetch video info" });
+      }
+
+      try {
+        const info = JSON.parse(jsonData);
+        const rawFormats = info.formats || [];
+
+        const processed = rawFormats
+          .filter((f) => (f.ext === "mp4" || f.ext === "m4a") && (f.vcodec !== "none" || f.acodec !== "none"))
+          .map((f) => ({
+            itag: f.format_id,
+            quality: f.format_note || `${f.height || "?"}p`,
+            type: f.vcodec === "none" ? "audio" : "video",
+            filesize: f.filesize ? formatBytes(f.filesize) : "Unknown",
+            resolution: f.resolution || `${f.width || "?"}x${f.height || "?"}`,
+          }));
+
+        // ✅ Remove duplicate quality entries (720p, 360p etc.)
+        const uniqueByQuality = [];
+        const seenQualities = new Set();
+
+        for (const format of processed) {
+          if (!seenQualities.has(format.quality)) {
+            seenQualities.add(format.quality);
+            uniqueByQuality.push(format);
+          }
+        }
+
+        // ✅ Sort: video before audio, then descending quality (e.g., 1080p > 720p)
+        uniqueByQuality.sort((a, b) => {
+          if (a.type !== b.type) return a.type === "video" ? -1 : 1;
+          return parseInt(b.quality) - parseInt(a.quality);
+        });
+
+        res.json({
+          title: meta.title,
+          thumbnail: `https://img.youtube.com/vi/${info.id}/hqdefault.jpg`,
+          formats: uniqueByQuality,
+        });
+      } catch (err) {
+        console.error("Parsing error:", err);
+        res.status(500).json({ error: "❌ Failed to parse yt-dlp output" });
+      }
+    });
+
   } catch (error) {
-    res.status(500).json({ error: "Error fetching video info" });
+    console.error("API error:", error);
+    res.status(500).json({ error: "❌ Failed to fetch video metadata" });
   }
 });
 
-// ✅ Video Download API (Supports Shorts & Normal Links)
+// Helper function to format bytes
+function formatBytes(bytes) {
+  const sizes = ["B", "KB", "MB", "GB"];
+  if (bytes === 0) return "0 B";
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+}
+
 app.get("/download", async (req, res) => {
   const { url, itag } = req.query;
+
   if (!url || !itag) {
-    return res.status(400).json({ error: "Missing parameters" });
+    return res.status(400).json({ error: "❌ Missing URL or itag parameter" });
   }
 
-  console.log(`📥 Downloading: ${url} (itag: ${itag})`);
+  console.log(`📥 Requesting download: ${url} | itag: ${itag}`);
 
   let ytdlpArgs = [];
+  let contentType = "";
+  let filename = "";
 
-  if (itag === "140") {
-    res.setHeader("Content-Type", "audio/m4a");
-    res.setHeader("Content-Disposition", `attachment; filename="audio_${Date.now()}.m4a"`);
-    ytdlpArgs = ["-f", "140", "-o", "-", url];
-  } else {
-    res.setHeader("Content-Type", "video/mp4");
-    res.setHeader("Content-Disposition", `attachment; filename="video_${Date.now()}.mp4"`);
+  // Auto-handle merging audio+video
+  if (itag === "audio") {
+    contentType = "audio/mp4";
+    filename = `audio_${Date.now()}.m4a`;
     ytdlpArgs = [
-      "-f", `${itag}/best`,
-      "--embed-metadata",
-      "--embed-subs",
-      "--no-playlist",
+      "-f", "bestaudio",
+      "--extract-audio",
+      "--audio-format", "m4a",
+      "--audio-quality", "0",
+      "-o", "-",
+      url
+    ];
+  } else {
+    contentType = "video/mp4";
+    filename = `video_${Date.now()}.mp4`;
+    ytdlpArgs = [
+      "-f", `${itag}+bestaudio/best`,
+      "--merge-output-format", "mp4",
       "-o", "-",
       url
     ];
   }
 
+  res.setHeader("Content-Type", contentType);
+  res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
   res.setHeader("Cache-Control", "no-store");
-  res.setHeader("Connection", "keep-alive");
   res.setHeader("Transfer-Encoding", "chunked");
+  res.setHeader("Connection", "keep-alive");
 
-  const ytdlProcess = spawn("yt-dlp", ytdlpArgs);
+  const ytdlpPath = path.join(__dirname, "bin", "yt-dlp"); // ✅ Use local binary here too
+  const ytdl = spawn(ytdlpPath, ytdlpArgs);
 
-  ytdlProcess.stdout.pipe(res);
+  ytdl.stdout.pipe(res);
 
-  ytdlProcess.stderr.on("data", (data) => {
-    console.error(`yt-dlp Error: ${data}`);
-  });
-
-  ytdlProcess.on("error", (error) => {
-    console.error("Process error:", error);
+  ytdl.on("error", (err) => {
+    console.error("❌ Failed to start yt-dlp:", err);
     if (!res.headersSent) {
-      res.status(500).json({ error: "Download failed", details: error.message });
+      res.status(500).json({ error: "yt-dlp process failed", details: err.message });
     }
   });
 
-  ytdlProcess.on("close", (code) => {
-    console.log(`✅ Download finished with code ${code}`);
+  ytdl.on("close", (code) => {
+    if (code === 0) {
+      console.log("✅ yt-dlp finished successfully");
+    } else {
+      console.error(`❌ yt-dlp exited with code ${code}`);
+    }
   });
 });
+
+
 
 app.listen(PORT, () => {
     console.log(`✅ Backend Server Running on port ${PORT} 🚀`);

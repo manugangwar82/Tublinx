@@ -105,6 +105,7 @@ function Home({ darkMode }) {
         try {
             setLoading(true);
             const res = await getVideoInfo(url);
+            console.log(res.data.formats);  // ये डाल के formats console में देख
             setVideoInfo(res.data);
         } catch (error) {
             setError("❌ Error fetching video info.");
