@@ -189,7 +189,9 @@ app.get("/videoInfo", async (req, res) => {
 
 
 
-    const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
+    // const ytdlProcess = spawn(ytdlpPath, ["-J", url]);
+    const ytdlProcess = spawn(ytdlpPath, ["-J", "--cookies", path.join(__dirname, "..", "bin", "cookies.txt"), url]);
+
     let jsonData = "";
 
     ytdlProcess.stdout.on("data", (chunk) => {
