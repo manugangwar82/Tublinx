@@ -1,15 +1,29 @@
 # Netscape HTTP Cookie File
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-1PAPISID	JeGfIKXQf1eV4TfIjAqmqnvnNNg~8qrP0W
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-1PSID	a.g000xAjMQOG8Bi9VOKrrm49-iIDQjQj38o2HjW94UkNIVSLoQ...
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-1PSIDCC	AKEykZVvSKt5ZgpQ9eIDboUetAfC-xKiV4MtwLfqoxVqGkUBll...
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-3PAPISID	JeGfIKXQf1eV4TfIjAqmqnvnNNg~8qrP0W
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-3PSID	a.g000xAjMQOG8Bi9VOKrrm49-iIDQjQj38o2HjW94UkNIVSLoQ...
-.youtube.com	TRUE	/	TRUE	2145916800	__Secure-3PSIDCC	AKEykZVvW3Vy3dOVPNeSlhjzRhZoKBX3M3_f82rFkqhqub3i9Qk...
-.youtube.com	TRUE	/	TRUE	2145916800	APISID	dsFro0dAKwiuRIzJe8AHes7PqUi~9aD
-.youtube.com	TRUE	/	TRUE	2145916800	HSID	A3sxFr4DQahw7WKA
-.youtube.com	TRUE	/	TRUE	2145916800	LOGIN_INFO	AFmmFzR92KLN27z6r6A5NAKoBg0kXz0TrViFhOKLuWL7YIY...
-.youtube.com	TRUE	/	TRUE	2145916800	PREF	f1=50000000&al=zz&gl=IN&hl=en
-.youtube.com	TRUE	/	TRUE	2145916800	SID	dsFro0dAKwiuRIzJe8AHes7PqUi~9aD
-.youtube.com	TRUE	/	TRUE	2145916800	SSID	524-aRcuW1sZloMEfJ5oNleQaZ
-.youtube.com	TRUE	/	TRUE	2145916800	SAPISID	AKEykZVvW3Vy3dOVPNeSlhjzRhZoKBX3M3_f82rFkqhqub3i9Qk...
-.youtube.com	TRUE	/	TRUE	2145916800	YSC	MNB2SNB-tIo
+# This file was generated for use with tools like curl, youtube-dl, etc.
+# Format: domain<TAB>flag<TAB>path<TAB>secure<TAB>expiration<TAB>name<TAB>value
+.google.com	TRUE	/	TRUE	1779637036	__Secure-3PSIDTS	sidts-CjIB5H03P0cZH15w-Qhq2wkVYJ80UQ3xcpPAXcfApxiKxB4Ct2bPa8BlnVGoHrjeG248vhAA
+.youtube.com	TRUE	/	TRUE	1763888718	__Secure-ROLLOUT_TOKEN	CJ6y0tCjnLXHVRDv8sqs9biNAxiEqNyGgsONAw%3D%3D
+.google.com	TRUE	/	TRUE	1763450926	AEC	AVh_V2ikClUMnx351pZjYpNxkj9bH1w-CMBTissQFNIQNq_tsv1bJ4Yhyw
+.doubleclick.net	TRUE	/	FALSE	1763889446	APC	AfxxVi4fymRuxCplqbde7HlRlR-quFFUB87v3qX68z4DosORhAXc8A
+.google.com	FALSE	/	FALSE	1782480050	APISID	dsFr0doKAwIuRIz8/AehIaefdP2qUi-9aD
+.youtube.com	FALSE	/	FALSE	1782480050	APISID	dsFr0doKAwIuRIz8/AehIaefdP2qUi-9aD
+.doubleclick.net	TRUE	/	TRUE	1756219106	ar_debug	1
+.doubleclick.net	TRUE	/	TRUE	1754822399	DSID	AJ0u58twdnp_EH5njqD...
+.google.com	TRUE	/	FALSE	1782480050	HSID	A5ghuxOnVib9TWM3C
+.youtube.com	TRUE	/	FALSE	1782480050	HSID	A3sxFTq4dxhw7WPkq
+.doubleclick.net	FALSE	/	FALSE	1783091359	id	OPT_OUT
+.youtube.com	TRUE	/	TRUE	1782480529	LOGIN_INFO	AFmmF2swRgIhALW...
+.google.com	TRUE	/	TRUE	1764159462	NID	524=gyuPw577bFnxjSujaAT...
+.youtube.com	FALSE	/	FALSE	1783091358	PREF	f4=4000000&tz=Asia.Calcutta
+.doubleclick.net	TRUE	/	TRUE	1763889039	receive-cookie-deprecation	1
+.google.com	FALSE	/	FALSE	1782480050	SAPISID	JeGlfXKQf1eV4TFj/AgmqnvnNNg-8qrP0W
+.youtube.com	FALSE	/	FALSE	1782480050	SAPISID	JeGlfXKQf1eV4TFj/AgmqnvnNNg-8qrP0W
+.google.com	FALSE	/	FALSE	1782480050	SID	g.a000xAjjMQQGBi...
+.youtube.com	FALSE	/	FALSE	1782480050	SID	g.a000xAjjMQQGBi...
+.youtube.com	FALSE	/	FALSE	1779641359	SIDCC	AKEyXzWA6mPOi1...
+.google.com	FALSE	/	FALSE	1779637036	SIDCC	AKEyXzVYr0UxF8N...
+.google.com	TRUE	/	TRUE	1782480050	SSID	ANa9xForDdCs8sqmx
+.youtube.com	TRUE	/	TRUE	1782480050	SSID	AXF3IjlBRFw1oJ38u
+.youtube.com	TRUE	/	TRUE	1763888957	VISITOR_INFO1_LIVE	_40_yTFP6Xk
+.youtube.com	TRUE	/	TRUE	1763888957	VISITOR_PRIVACY_METADATA	CgJJThIEGgAgbg%3D%3D
+.youtube.com	TRUE	/	TRUE	Session	YSC	5Q_94vaV1eg
